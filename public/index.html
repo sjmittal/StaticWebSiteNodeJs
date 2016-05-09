@@ -1,11 +1,263 @@
-<!DOCTYPE html>
 <html>
 <head>
-	<title>Home - Node Sample Site</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home Sample NodeJs</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        /*page custom styles - start*/
+        .btn-add {
+            width: 100%;
+            font-weight: bold;
+        }
+        /*page custom styles - end*/
+    </style>
 </head>
 
 <body>
-	<h1>You are on home page.</h1>
-</body>
+    <div class="container-fluid">
 
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>
+                        Products! <small>Add products to list!</small>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" style="text-align:center; ">
+                <div class="alert alert-success" id="messageSuccess" style="display: none; padding: 10px;">
+                    <ul id="successList" style="list-style: none;">
+                        <li></li>
+                    </ul>
+                </div>
+                <div class="alert alert-danger" id="messageError" style="display:none; padding:10px;">
+                    <ul id="errorList" style="list-style: none;">
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="txtName" class="col-sm-2 control-label">
+                            Name
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtName" placeholder="Enter Name" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="txtName" class="col-sm-2 control-label">
+                            Price ($)
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="number" min="0" max-length="5" class="form-control" id="txtPrice" placeholder="Enter Price" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtName" class="col-sm-2 control-label">
+                            Description
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea rows="3" max-length="50" class="form-control" id="txtDescription" placeholder="Enter Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary btn-add" id="btnAdd">Add Product</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <div class="row"><hr /></div>
+
+        <div class="row" id="productList">
+            
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+        <!--<script src="content/javascript/ProductListManagement.js"></script>-->
+        <script type="text/javascript">
+            var ManageProducts = function () {
+                
+                /*private local variables to ManageProducts class*/
+                var $Name = $("#txtName"),
+                $Price = $("#txtPrice"),
+                $Description = $("#txtDescription"),
+                $MessageSuccess = $("#messageSuccess"),
+                $MessageError = $("#messageError");
+                var errorMessages = [];
+                var action = "";
+                var id = 1;
+
+                /*private clear form method*/
+                var clearForm = function () {
+                    $Name.val('');
+                    $Price.val('');
+                    $Description.val('');
+                };
+
+                /*private validate method*/
+                var validate = function (productName, productPrice) {
+                    var error = true;
+                    errorMessages = [];
+
+                    if (productName == "") {
+                        error = false;
+                        errorMessages.push("Product name should not be empty!");
+                    }
+                    if (productPrice == "") {
+                        error = false;
+                        errorMessages.push("Product price should not be empty!");
+                    }
+                    else if (productName.length > 50) {
+                        error = false;
+                        errorMessages.push("Product name maximum length should be 50 characters!");
+                    }
+                    else if (productPrice.length > 5) {
+                        error = false;
+                        errorMessages.push("Product price maximum length 5 digits!");
+                    }
+                    return error;
+                };
+
+                /*private create product list method*/
+                var createProductList = function(id, productName, productPrice, productDescription) {
+                    var htmlProductList = "";
+                    htmlProductList += "<div class='col-md-3' id='listItem"+id+"'>";
+                    htmlProductList += "<div class='list-group'>";
+                    htmlProductList += "<a class='list-group-item active'>"+productName+ " - "+ productPrice+"$</a>";
+                    htmlProductList += "<div class='list-group-item'>";
+                    htmlProductList += "<h4 class='list-group-item-heading'>";
+                    htmlProductList += "Description";
+                    htmlProductList += "</h4>";
+                    htmlProductList += "<p class='list-group-item-text'>";
+                    htmlProductList += (productDescription == '') ? "N/A" : productDescription;
+                    htmlProductList += "</p>";
+                    htmlProductList += "</div>";
+                    htmlProductList += "<a href='"+id+"' class='list-group-item active' style='text-align:center;'data-rel='delete_product' tooltip='Delete Product'>Delete</a>";
+                    htmlProductList += "</div>";
+                    htmlProductList += "</div>";
+
+                    $('#productList').append(htmlProductList);
+                };
+
+                /*private bind events method*/
+                var bindEvents = function () { 
+
+                    $(document).on("click", "#btnAdd", function () {
+                        var productName = $Name.val();
+                        var productPrice = $Price.val();
+                        var productDescription = $Description.val();
+                        if (validate(productName, productPrice)) {
+                            /* call create product list */
+                            createProductList(id, productName, productPrice, productDescription);
+
+                            $('#successList').html('');
+                            var successHtml = "";
+                            successHtml += '<li>Product Added Successfully!</li>';
+                            $('#successList').html(successHtml);
+                            $MessageSuccess.fadeIn(800).delay(3000).fadeOut(800);
+                            id = id + 1;
+                            clearForm();
+                        } else {
+                            $('#errorList').html('');
+                            var errorHtml = "";
+                            $.each(errorMessages, function (key, value) {
+                                errorHtml += '<li>' + value + '</li>';
+                            });
+                            $('#errorList').html(errorHtml);
+                            $MessageError.fadeIn(800).delay(3000).fadeOut(800);
+                        }
+                    });
+
+                    //$(document).on("click", "#btnUpdate", function () {
+                    //    var campusName = $Name.val();
+                     //   var campusAddress = $Address.val();
+                     //   var isActive = false;
+
+                    //    if ($('.icheckbox_minimal').attr('aria-checked') != 'false') {
+                    //        isActive = true;
+                    //    }
+
+                    //    if (validate(campusName, campusAddress)) {
+                    //        submitCampusInformation(id, campusName, campusAddress, isActive);
+                     //   } else {
+                     //       $('#errorList').html('');
+                     //       var errorHtml = "";
+                    //        $.each(errorMessages, function (key, value) {
+                    //            errorHtml += '<li>' + value + '</li>';
+                    //        });
+                    //        $('#errorList').html(errorHtml);
+                    //        $MessageError.fadeIn(800).delay(3000).fadeOut(800);
+                     //   }
+                    //});
+
+                    $(document).on("click", "a[data-rel$='_product']", function (event) {
+                        event.preventDefault();
+                        var listItemId = $(this).attr("href");
+                        var type = $(this).attr("data-rel").split("_")[0];
+                        
+                        switch (type) {
+                            case 'delete': {
+                                alert(listItemId);
+                                alert(type);
+                                //if (isActive) {
+                                //$.confirm({
+                                //confirm: function () {
+                                    //deleteCampus(campusId);
+                                //}
+                                //});
+                                break;
+                            }
+                            //    case 'view': {
+                                //        viewProduct(id, productName, productPrice, productDescription);
+                                //    break;
+                                //}
+                                //    case 'edit':
+                                //    {
+                                //        action = "update";
+                                //        id = listItemId;
+                                //        
+                                //        //editProduct(id, productName, productPrice, productDescription);
+                                //       break;
+                                //    }
+                            default:
+                                break;
+                        }
+                        return false;
+                    });
+                };
+
+                /*public init method*/
+                this.init = function () {
+                    bindEvents();
+                };
+            };
+
+            $(function () {
+               var manageProducts = new ManageProducts();
+               manageProducts.init();
+            });
+        </script>
+</body>
 </html>
