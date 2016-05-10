@@ -1,5 +1,8 @@
 'use strict';
 
+    <script src="lib/react/react.js"></script>
+    <script src="lib/react/react-dom.js"></script>
+
 var mountNode = document.getElementById('addProductForm');
 var mountNodeList = document.getElementById('listcontainer');
 var formState = null;

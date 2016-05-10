@@ -23,9 +23,26 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h1>
-                        Products! <small>Add products to list!</small>
-                    </h1>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <h1 style="margin-top:0px;">
+                                Products! <small>Add products to list!</small>
+                            </h1>
+                        </div>
+                        <div class="col-md-5">
+                            <ul class="nav nav-pills pull-right">
+                                <li class="active">
+                                    <a href="/">Home</a>
+                                </li>
+                                <li>
+                                    <a href="/about">About</a>
+                                </li>
+                                <li>
+                                    <a href="/contact">Contact</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,7 +158,7 @@
                 };
 
                 /*private create product list method*/
-                var createProductList = function(id, productName, productPrice, productDescription) {
+                var createProductListItem = function(id, productName, productPrice, productDescription) {
                     var htmlProductList = "";
                     htmlProductList += "<div class='col-md-3' id='listItem"+id+"'>";
                     htmlProductList += "<div class='list-group'>";
@@ -161,6 +178,12 @@
                     $('#productList').append(htmlProductList);
                 };
 
+                /*private create product list method*/
+                var deleteProductListItem = function(id) {
+                   /*$("#listItem"+id).html("");*/
+                   $("#listItem"+id).remove();
+                };
+
                 /*private bind events method*/
                 var bindEvents = function () { 
 
@@ -170,7 +193,7 @@
                         var productDescription = $Description.val();
                         if (validate(productName, productPrice)) {
                             /* call create product list */
-                            createProductList(id, productName, productPrice, productDescription);
+                            createProductListItem(id, productName, productPrice, productDescription);
 
                             $('#successList').html('');
                             var successHtml = "";
@@ -190,28 +213,6 @@
                         }
                     });
 
-                    //$(document).on("click", "#btnUpdate", function () {
-                    //    var campusName = $Name.val();
-                     //   var campusAddress = $Address.val();
-                     //   var isActive = false;
-
-                    //    if ($('.icheckbox_minimal').attr('aria-checked') != 'false') {
-                    //        isActive = true;
-                    //    }
-
-                    //    if (validate(campusName, campusAddress)) {
-                    //        submitCampusInformation(id, campusName, campusAddress, isActive);
-                     //   } else {
-                     //       $('#errorList').html('');
-                     //       var errorHtml = "";
-                    //        $.each(errorMessages, function (key, value) {
-                    //            errorHtml += '<li>' + value + '</li>';
-                    //        });
-                    //        $('#errorList').html(errorHtml);
-                    //        $MessageError.fadeIn(800).delay(3000).fadeOut(800);
-                     //   }
-                    //});
-
                     $(document).on("click", "a[data-rel$='_product']", function (event) {
                         event.preventDefault();
                         var listItemId = $(this).attr("href");
@@ -219,28 +220,11 @@
                         
                         switch (type) {
                             case 'delete': {
-                                alert(listItemId);
-                                alert(type);
-                                //if (isActive) {
-                                //$.confirm({
-                                //confirm: function () {
-                                    //deleteCampus(campusId);
-                                //}
-                                //});
-                                break;
+                                if (confirm('Are you sure you want to delete?')) {
+                                    deleteProductListItem(listItemId);
+                                } 
+                               break;
                             }
-                            //    case 'view': {
-                                //        viewProduct(id, productName, productPrice, productDescription);
-                                //    break;
-                                //}
-                                //    case 'edit':
-                                //    {
-                                //        action = "update";
-                                //        id = listItemId;
-                                //        
-                                //        //editProduct(id, productName, productPrice, productDescription);
-                                //       break;
-                                //    }
                             default:
                                 break;
                         }
