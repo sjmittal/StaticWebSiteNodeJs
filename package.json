@@ -1,0 +1,13 @@
+{
+  "name": "static-website",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sjmittal/StaticWebSiteNodeJs.git"
+  },
+  "dependencies": {
+    "node-static": "^0.7.9"
+  },
+  "readmeFilename": "README.md",
+  "license": "MIT"
+}

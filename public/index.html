@@ -6,15 +6,34 @@
     <title>Home Sample NodeJs</title>
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-        /*page custom styles - start*/
-        .btn-add {
-            width: 100%;
-            font-weight: bold;
+    <link href="/content/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript">
+       (function(){
+        var dom,doc,where,iframe = document.createElement('iframe');
+        iframe.src = "javascript:false";
+        (iframe.frameElement || iframe).style.cssText = "width: 0; height: 0; border: 0";
+        var where = document.getElementsByTagName('script')[0];
+        where.parentNode.insertBefore(iframe, where);
+        try {
+          doc = iframe.contentWindow.document;
+        } catch(e) {
+          dom = document.domain;
+          iframe.src="javascript:var d=document.open();d.domain='"+dom+"';void(0);";
+          doc = iframe.contentWindow.document;
         }
-        /*page custom styles - end*/
-    </style>
+
+        doc.open()._l = function() {
+          var js = this.createElement("script");
+          if(dom) this.domain = dom;
+          js.id = "boomr-if-as";
+          js.src = '/content/javascript/boomerang-1.0-debug.js';
+          this.body.appendChild(js);
+        };
+
+        doc.write('<body onload="document._l();">');
+        doc.close();
+      })();
+  </script>    
 </head>
 
 <body>
@@ -109,10 +128,9 @@
             
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="/content/javascript/jquery.min.js"></script>
+        <script src="/content/javascript/bootstrap.min.js"></script>
 
-        <!--<script src="content/javascript/ProductListManagement.js"></script>-->
         <script type="text/javascript">
             var ManageProducts = function () {
                 

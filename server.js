@@ -5,7 +5,8 @@
 /*Global variables required to create http server*/
 var http = require('http');
 var fs = require('fs');
-
+var static = require('node-static');
+var fileServer = new static.Server();
 
 /* Create server */
 /* Two parameter required: request and response */
@@ -22,8 +23,7 @@ http.createServer(function(request, response){
 			getFileContents(response, 'public/contact.html', 'text/html');
 			break;
 		default:
-			response.writeHead(404, {'Content-Type':'text/plan'});
-			response.end('404 - Page not found.');
+			fileServer.serveFile(url, 200, {}, request, response);   
 	}
 
 }).listen(9003);
