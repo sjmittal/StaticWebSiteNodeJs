@@ -6662,3 +6662,15 @@ if (!Array.isArray) {
 }());
 
 BOOMR.t_end = new Date().getTime();
+
+
+BOOMR.init({
+	beacon_url: "http://localhost:4001/beacon/0000",
+	instrument_xhr: true,
+	clicks: {
+		click_url: "http://localhost:4001/beacon/0000"
+	},
+	RT: {
+	   strict_referrer: false
+	}
+});
